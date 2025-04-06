@@ -91,6 +91,7 @@ func fnListGroups(ce *commands.Event) {
 			ce.Log.Err(err).Msg("Failed to send groups to ReMatch backend")
 			ce.Reply("Failed to send groups to ReMatch backend: %v", err)
 		} else {
+			ce.Log.Info().Msg("Successfully sent your WhatsApp groups to ReMatch backend.")
 			ce.Reply("Successfully sent your WhatsApp groups to ReMatch backend.")
 		}
 	}
