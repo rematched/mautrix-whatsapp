@@ -175,15 +175,14 @@ type IGroupParticipant struct {
 // }
 
 // SendGroupsToReMatchBackend sends the WhatsApp groups to the ReMatch backend
-func SendGroupsToReMatchBackend(ctx context.Context, wa *whatsmeow.Client, userJID types.JID) error {
-
+func SendGroupsToReMatchBackend(ctx context.Context, client *whatsmeow.Client, jid types.JID) error {
 	// Get list of joined groups from whatsmeow
-	joinedGroups, err := wa.GetJoinedGroups()
+	joinedGroups, err := client.GetJoinedGroups()
 	if err != nil {
 		return fmt.Errorf("failed to get joined groups: %w", err)
 	}
 
-	userWANumber := userJID.User
+	userWANumber := jid.User
 
 	// Filter groups according to requirements
 	var filteredGroups []*types.GroupInfo

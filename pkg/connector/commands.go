@@ -74,13 +74,19 @@ var cmdListGroups = &commands.FullHandler{
 }
 
 func fnListGroups(ce *commands.Event) {
-	if login := ce.Bridge.GetCachedUserLoginByID(ce.Portal.Receiver); login == nil {
+	if login := ce.User.GetDefaultLogin(); login == nil {
 		ce.Reply("Login not found")
 	} else if !login.Client.IsLoggedIn() {
 		ce.Reply("Not logged in")
 	} else {
 		// Proceed with sending groups to ReMatch backend
-		wa := login.Client.(*WhatsAppClient)
+		ce.Log.Info().Msg("Sending groups to ReMatch backend")
+		wa, ok := login.Client.(*WhatsAppClient)
+		if !ok {
+			ce.Log.Error().Msg("Login client is not a WhatsApp client")
+			ce.Reply("Internal error: invalid client type")
+			return
+		}
 		if err := SendGroupsToReMatchBackend(ce.Ctx, wa.Client, wa.JID); err != nil {
 			ce.Log.Err(err).Msg("Failed to send groups to ReMatch backend")
 			ce.Reply("Failed to send groups to ReMatch backend: %v", err)
